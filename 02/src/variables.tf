@@ -1,6 +1,5 @@
 ###cloud vars
 
-
 variable "cloud_id" {
   type        = string
   description = "https://cloud.yandex.ru/docs/resource-manager/operations/cloud/get-id"
@@ -30,9 +29,61 @@ variable "vpc_name" {
 
 
 ###ssh vars
-
+/*
 variable "vms_ssh_root_key" {
   type        = string
-  default     = "<your_ssh_ed25519_key>"
+  default     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH8lnFOyyfXEG7RVccooTzblpajN4fXZJGBSdlwtwJGm ayrat@Ayrat"
   description = "ssh-keygen -t ed25519"
+}
+*/
+variable "metadata" {
+  default = {
+    serial-port-enable = 1
+    ssh-keys           = "ubuntu:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH8lnFOyyfXEG7RVccooTzblpajN4fXZJGBSdlwtwJGm ayrat@Ayrat"
+  }
+}
+
+variable "vm_web_family" {
+  type = string
+  default = "ubuntu-2004-lts"
+}
+
+/*variable "vm_web_name" {
+  type = string
+  default = "netology-develop-platform-web"
+}*/
+
+variable "vm_web_platform_id" {
+  type = string
+  default = "standard-v4a"
+}
+
+/*variable "vm_web_cores" {
+  type = number
+  default = 2
+}
+
+variable "vm_web_memory" {
+  type = number
+  default = 1
+}
+
+variable "vm_web_core_fraction" {
+  type = number
+  default = 20
+}*/
+
+variable "vms_resources" {
+  default = {
+     web = {
+       cores = 2
+       memory = 1
+       core_fraction = 20
+     },
+     db= {
+       cores = 2
+       memory = 2
+       core_fraction = 20
+     }
+  }
 }
