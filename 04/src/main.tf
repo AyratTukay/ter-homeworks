@@ -1,15 +1,3 @@
-#создаем облачную сеть
-/*resource "yandex_vpc_network" "develop" {
-  name = var.vpc_name
-}
-#создаем подсеть
-resource "yandex_vpc_subnet" "develop" {
-  name           = var.vpc_name
-  zone           = var.default_zone
-  network_id     = yandex_vpc_network.develop.id
-  v4_cidr_blocks = var.default_cidr
-}
-*/
 
 module "vpc" {
   source    = "./vpc"
@@ -19,12 +7,10 @@ module "vpc" {
 }
 
 module "test-vm" {
-  source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=main"
+  source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=4d05fab"
   env_name       = "develop" 
-#  network_id     = yandex_vpc_network.develop.id
   network_id     = module.vpc.vpc_id
   subnet_zones   = ["ru-central1-a"]
-#  subnet_ids     = [yandex_vpc_subnet.develop.id]
   subnet_ids     = [module.vpc.subnet_id]
   instance_name  = "webs"
   instance_count = 1
@@ -32,7 +18,7 @@ module "test-vm" {
   public_ip      = true
 
   labels = { 
-    owner= "ar.tukaev",
+    owner= "a.tukaev",
     project = "marketing"
      }
 
@@ -44,12 +30,10 @@ module "test-vm" {
 }
 
 module "example-vm" {
-  source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=main"
+  source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=4d05fab"
   env_name       = "stage"
-#  network_id     = yandex_vpc_network.develop.id
   network_id     = module.vpc.vpc_id
   subnet_zones   = ["ru-central1-a"]
-#  subnet_ids     = [yandex_vpc_subnet.develop.id]
   subnet_ids     = [module.vpc.subnet_id]
   instance_name  = "web-stage"
   instance_count = 1
@@ -69,8 +53,7 @@ module "example-vm" {
 }
 
 data "template_file" "cloudinit" {
-  template = file("${path.module}/cloud-init.yml")
-
+  template = file ("${path.module}/cloud-init.yml")
   vars = {
     ssh_public_key  = var.vms_ssh_root_key
   }
