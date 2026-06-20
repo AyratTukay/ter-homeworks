@@ -32,7 +32,7 @@ module "test-vm" {
   public_ip      = true
 
   labels = { 
-    owner= "ar.tukaev",
+    owner= "a.tukaev",
     project = "marketing"
      }
 
