@@ -1,0 +1,44 @@
+# STAGE 1: Builder - установка зависимостей
+FROM python:3.11-slim AS builder
+WORKDIR /app
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# STAGE 2: Runtime - минимальный образ
+FROM python:3.11-slim AS runtime
+
+# Создаём не-рутового пользователя
+RUN useradd -m -u 1000 appuser
+
+WORKDIR /app
+
+# Копируем код приложения
+COPY app.py .
+
+# Настраиваем PATH
+ENV PATH=/home/appuser/.local/bin:$PATH
+
+# Передаём права
+RUN chown -R appuser:appuser /app
+
+# Запускаем от не-рутового пользователя
+USER appuser
+
+# Переменные окружения
+ENV FLASK_APP=app.py
+ENV PYTHONUNBUFFERED=1
+
+EXPOSE 80
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:80/')" || exit 1
+
+# Запуск через gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:80", "--workers", "2", "app:app"]

@@ -29,24 +29,22 @@ variable "vms_ssh_root_key" {
 }
 
 
-variable "ip_address" {
-  type = string
-  description = "IP-адрес"
-  default = "1920.1680.0.1"
-
-  validation {
-    condition = can(regex("^(192|10|172|192|168|25[0-5]|24[0-9]|25[0-5]|256)$", var.ip_address))
-    error_message = "Неверный формат IP-адреса"
-  }
+variable "db_version" {
+  type        = string
+  default     = "8.0"
 }
-/*
-variable "ip_addresses" {
-  type = list(string)
-  description = "Список IP-адресов"
-  default = [ "192.168.0.1", "1.1.1.1", "127.0.0.1" ]
 
-  validation {
-    condition = all(for addr in var.ip_addresses : can(regex(addr, var.ip_address)))
-    error_message = "Неверный список IP-адресов"
-  }
-}*/
+variable "db_disk_size" {
+  type        = number
+  default     = 10
+}
+
+variable "db_disk_type" {
+  type        = string
+  default     = "network-ssd"
+}
+
+variable "vm_name" { 
+  type = string 
+  default = "final-project" 
+}
