@@ -11,7 +11,7 @@
 # own secret vars store.
 personal.auto.tfvars
 
-
+secret.tfvars
 terraform.tfvars
 
 tfplan

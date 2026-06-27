@@ -1,5 +1,5 @@
 resource "yandex_mdb_mysql_cluster" "my_mysql" {
-  name                = "my_mysql_cluster"
+  name                = "${var.vm_name}-mysql"
   environment         = "PRESTABLE"
   network_id          = module.vpc.vpc_id
   version             = var.db_version
@@ -17,17 +17,23 @@ resource "yandex_mdb_mysql_cluster" "my_mysql" {
   }
 }
 
-resource "yandex_mdb_mysql_database" "db1" {
+resource "yandex_mdb_mysql_database" "app_database" {
   cluster_id = yandex_mdb_mysql_cluster.my_mysql.id
-  name       = "db1"
+  name       = "app_database"
 }
 
-resource "yandex_mdb_mysql_user" "user-db" {
+resource "yandex_mdb_mysql_user" "app_user" {
   cluster_id = yandex_mdb_mysql_cluster.my_mysql.id
-  name       = "user-db"
-  password   = "passwd_db"
+  name       = "app_user"
+  password   = var.db_password
   permission {
-    database_name = yandex_mdb_mysql_database.db1.name
+    database_name = "app_database"
     roles         = ["ALL"]
   }
+}
+
+
+output "db_host" {
+  description = "MySQL host FQDN"
+  value       = yandex_mdb_mysql_cluster.my_mysql.host[0].fqdn
 }

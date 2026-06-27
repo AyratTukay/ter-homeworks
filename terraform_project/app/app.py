@@ -1,37 +1,25 @@
-from flask import Flask, jsonify
+from flask import Flask
 import os
-import mysql.connector
+import pymysql
 
 app = Flask(__name__)
 
-DB_CONFIG = {
-    'host': os.getenv('DB_HOST', 'localhost'),
-    'port': int(os.getenv('DB_PORT', 3306)),
-    'user': os.getenv('DB_USER', 'user-db'),
-    'password': os.getenv('DB_PASSWORD', 'passwd_db'),
-    'database': os.getenv('DB_NAME', 'db1')
-}
+DB_HOST = os.environ.get('DB_HOST', 'localhost')
+DB_USER = os.environ.get('DB_USER', 'app_user')
+DB_PASSWORD = os.environ.get('DB_PASSWORD', 'password')
+DB_NAME = os.environ.get('DB_NAME', 'app_database')
 
 @app.route('/')
-def health():
-    return jsonify({'service':'yc-final-project','status':'ok','version':'1.0.0'}), 200
-
-@app.route('/db')
-def db_check():
+def index():
     try:
-        conn = mysql.connector.connect(**DB_CONFIG)
-        cursor = conn.cursor()
-        cursor.execute("SELECT VERSION()")
-        version = cursor.fetchone()[0]
-        cursor.close()
+        conn = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database=DB_NAME)
         conn.close()
-        return jsonify({'status':'connected','mysql_version':version}), 200
+        status = "Успешно подключено к MySQL!"
     except Exception as e:
-        return jsonify({'status':'error','message':str(e)}), 500
-
-@app.route('/api/data')
-def get_data():
-    return jsonify({'message':'Я был тут!','db_host':DB_CONFIG['host']}), 200
+        status = f"Ошибка подключения к MySQL: {e}"
+    
+    return f"<h1>Статус приложения: Запущено</h1><p>{status}</p>"
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=5000)
+    
