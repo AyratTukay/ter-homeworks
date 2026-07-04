@@ -97,8 +97,19 @@ runcmd:
 
   ![Скрин сборки проекта](img/img9.png)
 
-  ![Скрин реестра](img/img11.png)  
+  ![Скрин реестра](img/img10.png)  
 
+Вышел из положения таким образом:   
+- очистил локальный кэш сборщика командой ```docker builder prune -a -f```  
+- полностью очистил неиспользуемые данные Docker ```docker system prune -a -f``` 
+- собрал образ БЕЗ использования старого кэша ```docker build --no-cache -t project-app:latest .```  
+- привязал новый тег и отправил образ ```docker tag project-app:latest cr.yandex/crp1o3cbftqh48f35pfc/project-app:latest```, ```docker push cr.yandex/crp1o3cbftqh48f35pfc/project-app:latest```  
+
+  ![Скрин отправки](img/img11.png) 
+
+  ![Скрин отправки2](img/img12.png) 
+
+  ![Скрин яндекс клоуд](img/img13.png) 
 
 
 
@@ -107,6 +118,25 @@ runcmd:
 
 
 **Выполнение:**  
+Подключился к ВМ по SSH.
+```
+curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+yc init
+yc container registry configure-docker
+docker pull cr.yandex/crp1o3cbftqh48f35pfc/project-app:latest
+```
+Далее запустил образ с передачей ENV переменных:  
+```
+docker run -d \
+  --name app-web \
+  -p 80:5000 \
+  -e DB_HOST="${MYSQL_HOST}" \
+  -e DB_USER="app_user" \
+  -e DB_PASSWORD="${DB_PASSWORD}" \
+  -e DB_NAME="app_database" \
+  "${REGISTRY_PATH}"
+```
+После запуска, приложение стало доступно по публичному IP.
+  ![Скрин curl](img/img14.png) 
 
-
-
+  ![Скрин браузер](img/img15.png) 

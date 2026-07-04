@@ -24,7 +24,7 @@ variable "default_cidr" {
 
 variable "ssh_public_key" {
   type        = string
-  default     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH8lnFOyyfXEG7RVccooTzblpajN4fXZJGBSdlwtwJGm ayrat@Ayrat"
+  default     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJe3r/ugJb2op0aeiUTkH522aJ8NH1wynJNVePvIvLl+ tukay72@yandex.ru"
   description = "ssh-keygen -t ed25519"
 }
 
