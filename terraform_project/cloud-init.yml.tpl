@@ -25,7 +25,7 @@ write_files:
           container_name: web-app
           restart: unless-stopped
           ports:
-            - "80:80"
+            - "80:5000"
           env_file:
             - .env
           healthcheck:

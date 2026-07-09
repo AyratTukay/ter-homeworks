@@ -96,3 +96,8 @@ variable "vm_disk_size" {
   type = number 
   default = 20
   }
+
+variable "my_registry_id" {
+  description = "Идентификатор реестра контейнеров"
+  type        = string
+}

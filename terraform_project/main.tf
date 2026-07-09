@@ -22,7 +22,7 @@ locals {
     db_user        = var.db_user
     db_password    = var.db_password
     db_name        = var.db_name
-    registry_id    = var.registry_id
+    registry_id    = var.my_registry_id
   })
 }
 
